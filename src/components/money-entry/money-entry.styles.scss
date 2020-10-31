@@ -1,0 +1,22 @@
+.money-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+}
+
+.money-entry-date {
+  display: block;
+}
+.money-entry-desc {
+  font-size: 10px;
+}
+.money-entry-delete-btn{
+  cursor: pointer;
+  &:hover {
+    color: red;
+  }
+}
+.dark {
+  background-color: #11111181;
+}

@@ -1,24 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useContext} from 'react'
+import {Route, BrowserRouter, Switch, Redirect} from 'react-router-dom';
+import { AuthTokenContext } from './context/Auth-token-context/AuthTokenContext'
+import LoginAndRegister from './components/login-and-register/login-and-register.component'
+
+import Money from './components/money/money.component'
 
 function App() {
+  const [authToken] = useContext(AuthTokenContext);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+      <BrowserRouter>
+        <Switch>
+        <Route exact path='/' component={LoginAndRegister} />
+        <Route exact path="/money" render={() => {
+        return (
+         authToken.token ?
+         <Money /> :
+         <Redirect to="/" /> 
+       )
+       }}
+       />
+        </Switch>
+      </BrowserRouter>
+      </div>
   );
 }
 
