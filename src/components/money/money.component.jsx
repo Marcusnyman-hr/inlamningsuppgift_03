@@ -65,13 +65,13 @@ export default function Money() {
   function addEntry(newEntry) {
     const {account} = newEntry;
     if (account === 'income') {
-      setIncome([...income, newEntry])
+      setIncome(sortEntries([...income, newEntry]))
     }
     if (account === 'expense') {
-      setExpenses([...expenses, newEntry])
+      setExpenses(sortEntries([...expenses, newEntry]))
     }
   }
-
+  
   //Delete entry
   function deleteEntry(id, account) {
     const url = 'http://localhost:5000/api/money/delete'
@@ -106,6 +106,16 @@ export default function Money() {
 
   }
 
+  //sort the entries
+  function sortEntries(entries) {
+    console.table(entries)
+    const sortedArray = entries.sort((a, b) => {
+      return new Date(b.date) - new Date(a.date);
+    })
+    console.table(sortedArray)
+    return sortedArray;
+  }
+
   //Map the fetched entries
   function mapEntries(entriesToMap) {
     const entries = entriesToMap.map((entry, index) => {
@@ -120,9 +130,9 @@ export default function Money() {
     const apiUrl = 'http://localhost:5000/api/money'
     const token = authToken.token;
     axios.get(apiUrl, {headers: {"auth-token": token}})
-    .then((response) => {
-      setIncome(response.data.income);
-      setExpenses(response.data.expenses);
+    .then((response) => {   
+      setIncome(sortEntries(response.data.income));
+      setExpenses(sortEntries(response.data.expenses));
     })
     .catch(error => console.log(error))
   }
