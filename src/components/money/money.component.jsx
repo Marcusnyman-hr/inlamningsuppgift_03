@@ -18,6 +18,9 @@ export default function Money() {
   const [expenses, setExpenses] = useState([]);
   const [rates, setRates] = useState([]);
   const [addEntryToggle, setAddEntryToggle] = useState(false);
+  const [editEntry, setEditEntry] = useState({
+    toggle: false,
+  });
 
   //fetch rates and userentries
   useEffect(() => {
@@ -27,16 +30,26 @@ export default function Money() {
 
   return (
     <div className='money'>
-    {addEntryToggle ? <AddPost toggleAddEntry={toggleAddEntry} addEntry={addEntry}/> : null}
+    {addEntryToggle ? <AddPost toggleAddEntry={toggleAddEntry} addEntry={addEntry} type='add'/> : null}
+    {editEntry.toggle ? <AddPost 
+    toggleAddEntry={toggleAddEntry} 
+    addEntry={addEntry} 
+    entryToEdit={editEntry}
+    setEditEntry={setEditEntry}
+    editExistingEntry={editExistingEntry}
+    deleteEntry={deleteEntry}
+    type='edit'/> : null}
     <div className='money-container'>
     <MoneyHeader toggleAddEntry={toggleAddEntry}/>
     <div className='income'>
       <h3 className='money-container-h3'>Income</h3>
+      
       <div className='money-container-income'>
       {income.length === 0 ? <span className='no-data-msg'>No data to show yet!</span> : null}
         <ul>
           {mapEntries(income)}
         </ul>
+        {editEntry.toggle}
       </div>
     </div>
    
@@ -61,17 +74,43 @@ export default function Money() {
     setAddEntryToggle(!addEntryToggle)
   }
 
-  //add a new entry to the state, backend is beeing updated from addEntry component (this is to minimize get/posts)
+  //add a new entry 
   function addEntry(newEntry) {
-    const {account} = newEntry;
-    if (account === 'income') {
-      setIncome(sortEntries([...income, newEntry]))
-    }
-    if (account === 'expense') {
-      setExpenses(sortEntries([...expenses, newEntry]))
-    }
+    const url = 'http://localhost:5000/api/money/add'
+    const token = authToken.token;
+    axios.post(url, newEntry, {headers: {'auth-token': token}})
+    .then((res) => {
+      if (res.status === 200) {
+        const {account} = newEntry;
+        if (account === 'income') {
+          setIncome(sortEntries([...income, newEntry]))
+        }
+        if (account === 'expense') {
+          setExpenses(sortEntries([...expenses, newEntry]))
+        }
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    });
   }
-  
+
+  //Edit existing entry
+  function editExistingEntry(updatedEntry){
+    const url = `http://localhost:5000/api/money/update/${updatedEntry.account}`
+    const token = authToken.token;
+    axios.post(url, updatedEntry, {headers: {'auth-token': token}})
+    .then((res) => {
+      if (res.status === 200) {
+        fetchUsersEntries();
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+
+  }
+
   //Delete entry
   function deleteEntry(id, account) {
     const url = 'http://localhost:5000/api/money/delete'
@@ -120,7 +159,7 @@ export default function Money() {
   function mapEntries(entriesToMap) {
     const entries = entriesToMap.map((entry, index) => {
       console.log(index)
-      return <MoneyEntry entryData={entry} account={entry.account} key={entry.id} index={index} deleteEntry={deleteEntry}/>
+      return <MoneyEntry entryData={entry} account={entry.account} key={entry.id} index={index} deleteEntry={deleteEntry} setEditEntry={setEditEntry}/>
     })
     return entries
   }

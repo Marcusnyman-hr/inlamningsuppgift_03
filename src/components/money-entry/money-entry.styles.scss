@@ -17,6 +17,13 @@
     color: red;
   }
 }
+.money-entry-edit-btn{
+  cursor: pointer;
+  margin-bottom: 5px;
+  &:hover {
+    color: rgb(51, 255, 0);
+  }
+}
 .dark {
   background-color: #11111181;
 }
