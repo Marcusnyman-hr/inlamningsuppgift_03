@@ -123,7 +123,6 @@ export default function Money() {
     axios.post(url, entryToDelete, {headers: {'auth-token': token}})
       .then((res) => {
         if (res.status === 200) {
-          console.log(res)
         }
       })
       .catch((error) => {
@@ -147,11 +146,9 @@ export default function Money() {
 
   //sort the entries
   function sortEntries(entries) {
-    console.table(entries)
     const sortedArray = entries.sort((a, b) => {
       return new Date(b.date) - new Date(a.date);
     })
-    console.table(sortedArray)
     return sortedArray;
   }
 

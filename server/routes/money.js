@@ -41,7 +41,6 @@ router.post('/update/:account/',verify, async (req,res) => {
   const user = await User.findOne({_id: req.user._id});
   try{
     const updatedPost = req.body;
-    console.log(updatedPost)
     if (req.params.account === 'expense') {
       let expenses = user.expenses;
       const indexOfEntryToBeCanged = expenses.findIndex(entry => entry.id === updatedPost.id);
@@ -49,8 +48,6 @@ router.post('/update/:account/',verify, async (req,res) => {
       expenses.push(updatedPost);
       user.expenses = expenses;
       user.save()
-      console.log(expenses)
-      console.log(user.expenses)
       res.status(200).send('post updated');
     }
     if (req.params.account === 'income') {
