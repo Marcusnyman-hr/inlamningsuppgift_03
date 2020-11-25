@@ -30,4 +30,4 @@ app.use('/api/money', moneyRoute);
 
 
 //start the server
-app.listen(5000, () => console.log('Server started on port 5000'));
+module.exports = app.listen(5000, () => console.log('Server started on port 5000'));
